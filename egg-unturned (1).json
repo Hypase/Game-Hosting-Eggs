@@ -1,0 +1,165 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2024-12-19T19:52:02-05:00",
+    "name": "Unturned",
+    "author": "parker@parkervcp.com",
+    "description": "Unturned dedicated server with Openmod\/Rocketmod and Variables.",
+    "features": [
+        "gsl_token",
+        "steam_disk_space"
+    ],
+    "docker_images": {
+        "griffindor30\/unturned-egg:latest": "griffindor30\/unturned-egg:latest"
+    },
+    "file_denylist": [],
+    "startup": ".\/Unturned_Headless.x86_64 -batchmode -nographics -ThreadedConsole -port {{SERVER_PORT}} -maxplayers {{MAX_PLAYERS}} -map \"{{SERVER_MAP}}\" -perspective {{PERSPECTIVE}} -mode {{GAMEMODE}} -name \"{{NAME}}\" -{{PVEPVP}} -password {{PASSWORD}} -gslt {{STEAM_ACC}} -owner {{OWNER}} -welcome \"{{WELCOME}}\"  -LogSteamNetworkingSockets=0 +InternetServer\/{{SERVER_FOLDER}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"Loading level: 100%\",\r\n    \"userInteraction\": []\r\n}",
+        "logs": "{\r\n    \"custom\": true,\r\n    \"location\": \"latest.log\"\r\n}",
+        "stop": "shutdown"
+    },
+    "scripts": {
+        "installation": {
+            "script": "apt update\r\napt -y --no-install-recommends install curl libgdiplus lib32gcc1 ca-certificates\r\napt install -y curl lib32gcc1 lib32stdc++6 libc6 libgl1-mesa-glx libxcursor1 libxrandr2 libc6-dev libgcc-4.8-dev\r\n\r\n\r\ncd \/tmp\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\n\r\nmkdir -p \/mnt\/server\/steam\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steam\r\ncd \/mnt\/server\/steam\r\n\r\nchown -R root:root \/mnt\r\n\r\nexport HOME=\/mnt\/server\r\n.\/steamcmd.sh +@sSteamCmdForcePlatformBitness 64 +login anonymous +force_install_dir \/mnt\/server +app_update 1110390 +quit\r\n\r\nmkdir -p \/mnt\/server\/Servers\/Default\/Server\r\ntouch \/mnt\/server\/Servers\/Default\/Server\/Commands.dat",
+            "container": "ubuntu:18.04",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "RocketMod",
+            "description": "When toogled RocketMod will install on the next restart and update each time the servers i started.",
+            "env_variable": "ROCKET_AUTOUPDATE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Unturned Auto Update",
+            "description": "When toogled Unturned will automatically check for updates on start and update if needed.",
+            "env_variable": "GAME_AUTOUPDATE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Map",
+            "description": "Set the map for the server",
+            "env_variable": "SERVER_MAP",
+            "default_value": "PEI",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string|max:60",
+            "field_type": "text"
+        },
+        {
+            "name": "Name",
+            "description": "This sets the Server Name",
+            "env_variable": "NAME",
+            "default_value": "aSync Services",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string|max:60",
+            "field_type": "text"
+        },
+        {
+            "name": "Perspective",
+            "description": "This changes the Perspectives in your server. You can use first,both,third, and vehicle.",
+            "env_variable": "PERSPECTIVE",
+            "default_value": "Both",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "|in:Both,First,Third,Vehicle",
+            "field_type": "text"
+        },
+        {
+            "name": "Mode",
+            "description": "This sets the difficulty of your server.Hard,Normal,Easy",
+            "env_variable": "GAMEMODE",
+            "default_value": "Easy",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "|in:Easy,Normal,Hard",
+            "field_type": "text"
+        },
+        {
+            "name": "PVP\/PVE",
+            "description": "This sets your Server either to PVP or PVE.",
+            "env_variable": "PVEPVP",
+            "default_value": "PVP",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required||in:PVE,PVP",
+            "field_type": "text"
+        },
+        {
+            "name": "Password",
+            "description": "Set a password on your Unturned Server",
+            "env_variable": "PASSWORD",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:60",
+            "field_type": "text"
+        },
+        {
+            "name": "Max Players",
+            "description": "Enter a number between 1-200 for Player Slots.",
+            "env_variable": "MAX_PLAYERS",
+            "default_value": "24",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "integer|between:1, 200",
+            "field_type": "text"
+        },
+        {
+            "name": "Owner",
+            "description": "Enter the Owners Steamid64.",
+            "env_variable": "OWNER",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:80",
+            "field_type": "text"
+        },
+        {
+            "name": "Welcome Message",
+            "description": "Enter your welcome message and this will be shown to players when they join.",
+            "env_variable": "WELCOME",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:100",
+            "field_type": "text"
+        },
+        {
+            "name": "Login_Token",
+            "description": "This login token allows you to publically show your server on the server list.",
+            "env_variable": "STEAM_ACC",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:60",
+            "field_type": "text"
+        },
+        {
+            "name": "Server Folder",
+            "description": "This allows you to change the server folder. An example would be changing the default \/Servers\/unturned to something like \/Servers\/Sparked",
+            "env_variable": "SERVER_FOLDER",
+            "default_value": "Default",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string|max:60",
+            "field_type": "text"
+        }
+    ]
+}
